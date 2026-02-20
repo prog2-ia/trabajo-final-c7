@@ -1,6 +1,7 @@
 class Usuario:
     num_usuarios = 0 # Numero de Usuarios
     def __init__(self, nombre_usuario, contraseña, email, dinero): # Constructor
+        self.id = type(self).num_usuarios
         self.nombre_usuario = nombre_usuario
         self.contraseña = contraseña
         self.email = email
@@ -8,10 +9,11 @@ class Usuario:
         type(self).num_usuarios += 1
 
     def __str__(self): # Visualizacion simple del objeto
-        return f'Nombre usuario: {self.nombre_usuario}\nContraseña: {self.contraseña}\nEmail: {self.email}\nDinero: {self.dinero}'
+        return f'Id: {self.id}\nNombre usuario: {self.nombre_usuario}\nContraseña: {self.contraseña}\nEmail: {self.email}\nDinero: {self.dinero}'
 
     def __repr__(self): # Visualizacion completa del objeto
-        return (f'Usuario(nombre_usuario={self.nombre_usuario}, '
+        return (f'Usuario(id={self.id}, '
+                f'nombre_usuario={self.nombre_usuario}, '
                 f'contraseña={self.contraseña}, '
                 f'email={self.email}, '
                 f'dinero={self.dinero})')
