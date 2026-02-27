@@ -2,8 +2,8 @@ from clase_accion import Accion
 class Transaccion(Accion):
 
     cont=0
-    def __init__(self, simbolo, precio, usuario, cantidad, fecha):
-        super().__init__(simbolo, precio)
+    def __init__(self, id, precio, nombre,usuario, cantidad, fecha):
+        super().__init__(id, nombre,precio)
         self.usuario = usuario
         self.cantidad = cantidad
 
@@ -14,7 +14,7 @@ class Transaccion(Accion):
         return self.precio * self.cantidad
 
     def __str__(self):
-        return f'{self.usuario}  {self.simbolo} {self.precio} {self.cantidad} {self.fecha}'
+        return f'{self.usuario}  {self.id} {self.precio} {self.cantidad} {self.fecha}'
 
     def contador(self):
         return self.cont

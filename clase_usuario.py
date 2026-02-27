@@ -1,11 +1,14 @@
+from clase_transaccion import Transaccion
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
+
     def __init__(self, nombre_usuario, contraseña, email, dinero): # Constructor
         self.id = type(self).num_usuarios
         self.nombre_usuario = nombre_usuario
         self.contraseña = contraseña
         self.email = email
         self.dinero = dinero
+        self.transacciones=[]
         type(self).num_usuarios += 1
 
     def __str__(self): # Visualizacion simple del objeto
@@ -37,3 +40,10 @@ class Usuario():
     @classmethod
     def obtener_num_usuarios(cls): # Metodo de clase para obtener la cantidad de usuarios
         return cls.num_usuarios
+
+    def compra(self,simbolo,precio,cantidad,fecha):
+        t=Transaccion(simbolo, precio, self.nombre_usuario, cantidad, fecha)
+        self.transacciones.append(t)
+    def mostrar_transacciones(self):
+        for i in self.transacciones:
+            print(i)
