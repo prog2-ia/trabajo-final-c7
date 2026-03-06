@@ -2,6 +2,7 @@ from clase_transaccion import Transaccion
 from clase_usuario import Usuario
 
 class Interfaz:
+
     def mostrar_menu(self):
 
             print("----- simulador de inversion -----")
