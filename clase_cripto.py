@@ -1,6 +1,6 @@
 from clase_activo import Activo
 
-class Accion(Activo):
+class Cripto(Activo):
     def __init__(self, nombre, precio, codigo):
         super().__init__(nombre, precio)
         self.codigo = codigo
@@ -12,4 +12,4 @@ class Accion(Activo):
             f'Codigo: {self.codigo}\n')
 
     def tipo(self):
-        return 'Accion'
+        return 'Cripto'
