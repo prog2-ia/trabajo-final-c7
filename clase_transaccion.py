@@ -16,9 +16,8 @@ class Transaccion():
         return self.activo.tipo()
 
     def __str__(self):
-        return (f'Usuario: {self.usuario.nombre_usuario}\n'
-                f'Nombre : {self.activo.nombre}\n'
-                f'Precio: {self.activo.precio}\n'
+        return (f'Usuario: {self.usuario}\n'
+                f'Nombre: {self.activo.nombre}\n'
                 f'Cantidad: {self.cantidad}\n'
                 f'Tipo de activo: {self.tipo()}\n'
                 f'Fecha: {self.fecha}\n')

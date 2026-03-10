@@ -7,4 +7,3 @@ class Activo():
         return (
             f'Nombre: {self.nombre}\n'
             f'Precio: {self.precio}\n')
-

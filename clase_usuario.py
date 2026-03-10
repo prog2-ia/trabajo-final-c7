@@ -1,4 +1,6 @@
 from clase_transaccion import Transaccion
+from datetime import datetime
+
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
 
@@ -41,9 +43,13 @@ class Usuario():
     def obtener_num_usuarios(cls): # Metodo de clase para obtener la cantidad de usuarios
         return cls.num_usuarios
 
-    def compra(self,simbolo,precio,cantidad,fecha):
-        t=Transaccion(simbolo, precio, self.nombre_usuario, cantidad, fecha)
+    def compra(self,activo,cantidad):
+        fecha = datetime.now()
+        precio = activo.precio
+        self.dinero -= cantidad*precio
+        t=Transaccion(activo, self.nombre_usuario, cantidad, fecha)
         self.transacciones.append(t)
+
     def mostrar_transacciones(self):
         for i in self.transacciones:
             print(i)
