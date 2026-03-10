@@ -9,9 +9,9 @@ def leer_usuarios(usuarios):
         with open('usuarios.txt', 'r') as f:
             lineas = f.readlines()
 
-        if lineas[0] != '\n':
+        if lineas:
             for linea in lineas:
-                datos = linea.split(' ')
+                datos = linea.strip().split(' ')
                 nombre_usuario = datos[0]
                 contraseña = datos[1]
                 email = datos[2]
@@ -67,45 +67,56 @@ def iniciar_sesion(usuarios):
 
 def menu(id, usuarios, activos):
     opcion = '0'
-    while opcion not in ('1', '2', '3', '4', '5', '6'):
+    while opcion not in ('1', '2', '3', '4', '5', '6', '7'):
         print(f'Hola {usuarios[id].nombre_usuario}')
         print('Menu de opciones:')
         print('1. Comprar activo')
-        print('2. Mostrar Transacciones')
-        print('3. Ingresar Dinero')
-        print('4. Mostrar Saldo Actual')
-        print('5. Sacar Dinero')
-        print('6. Cerrar Sesion')
+        print('2. Mostrar Activos')
+        print('3. Mostrar Transacciones')
+        print('4. Ingresar Dinero')
+        print('5. Mostrar Saldo Actual')
+        print('6. Sacar Dinero')
+        print('7. Cerrar Sesion')
 
         opcion = input('Ingrese una opcion: ')
 
     if opcion == '1':
+        verificar = False
         nombre_activo = input('Ingrese activo: ')
         cantidad = int(input('Ingrese cantidad: '))
         for activo in activos:
             if activo.nombre == nombre_activo:
                 usuarios[id].compra(activo, cantidad)
+                verificar = True
+        if not verificar:
+            print('Activo no encontrado')
         return True
 
     elif opcion == '2':
-        usuarios[id].mostrar_transacciones()
+        print('Activos: ')
+        for activo in activos:
+            print(f'Nombre: {activo.nombre}, Precio: {activo.precio}')
         return True
 
     elif opcion == '3':
+        usuarios[id].mostrar_transacciones()
+        return True
+
+    elif opcion == '4':
         print(f'Saldo actual: {usuarios[id].dinero}')
         ingreso = int(input('Cuanto dinero quiere ingresar: '))
         usuarios[id].agregar_dinero(ingreso)
         return True
-    elif opcion == '4':
+    elif opcion == '5':
         print(f'Saldo actual: {usuarios[id].dinero}')
         return True
 
-    elif opcion == '5':
+    elif opcion == '6':
         print(f'Saldo actual: {usuarios[id].dinero}')
         retirar = int(input('Cuanto dinero quiere retirar: '))
         usuarios[id].sacar_dinero(retirar)
         return True
-    elif opcion == '6':
+    elif opcion == '7':
         print('Cerrando Sesion...')
         guardar_usuarios(usuarios)
         return False
@@ -116,13 +127,13 @@ def cargar_activos(activos):
         with open('activos.txt', 'r') as f:
             lineas = f.readlines()
 
-        if lineas[0] != '\n':
+        if lineas:
             for linea in lineas:
-                datos = linea.split(' ')
+                datos = linea.strip().split(' ')
                 nombre = datos[0]
                 precio = int(datos[1])
                 codigo = datos[2]
-                tipo =  datos[3]
+                tipo =  datos[3].strip()
                 if tipo == 'Accion':
                     activo = Accion(nombre, precio, codigo)
                 elif tipo == 'Fondo':
@@ -151,20 +162,20 @@ def inicio(usuarios):
         print('3. Salir')
         opcion = input('Opcion: ')
 
-    if opcion == '1':
-        if usuarios:
-            return usuarios, iniciar_sesion(usuarios), True
-        else:
-            print('No hay usuarios registrados')
-            return inicio(usuarios)
-    elif opcion == '2':
-        return registro(usuarios)
-    else:
-        return usuarios, None, False
+        if opcion == '1':
+            if usuarios:
+                return usuarios, iniciar_sesion(usuarios), True
+            else:
+                print('No hay usuarios registrados')
+                opcion = '0'
+
+        elif opcion == '2':
+            return registro(usuarios)
+        elif opcion == '3':
+            return usuarios, None, False
 
 if __name__ == '__main__':
 
-    apple = Accion('Apple', 100, 'APPL')
     activos = []
     activos = cargar_activos(activos)
     usuarios = []
@@ -179,5 +190,3 @@ if __name__ == '__main__':
             sesion = False
         while sesion:
             sesion = menu(id, usuarios, activos)
-
-
