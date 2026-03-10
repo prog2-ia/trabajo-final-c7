@@ -4,23 +4,36 @@ from clase_transaccion import Transaccion
 from interfaz import Interfaz
 
 
-def documento(id):
+def leer_usuarios(usuarios):
     try:
-        with open('sesiones.txt', 'r') as f:
+        with open('usuarios.txt', 'r') as f:
             lineas = f.readlines()
 
-        for linea in lineas:
-            datos = linea.split(' ')
-            if int(datos[0]) == id:
-                nombre_usuario = datos[1]
-                contraseña = datos[2]
-                email = datos[3]
-                dinero = datos[4]
-                return nombre_usuario, contraseña, email, dinero
+        if lineas == '':
+            for linea in lineas:
+                datos = linea.split(' ')
+                nombre_usuario = datos[0]
+                contraseña = datos[1]
+                email = datos[2]
+                dinero = int(datos[3])
+                usuario = Usuario(nombre_usuario, contraseña, email, dinero)
+                usuarios.append(usuario)
+
+            return usuarios
+        else:
+            usuarios = []
+            return usuarios
 
     except FileNotFoundError:
-        with open('sesiones.txt', 'w'):
+        with open('usuarios.txt', 'w'):
             pass
+        usuarios = []
+        return usuarios
+
+def guardar_usuarios(usuarios):
+    with open('usuarios.txt', 'w') as f:
+        for usuario in usuarios:
+            f.write(usuario.nombre_usuario + ' ' + usuario.contraseña + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
 
 def registro(usuarios):
@@ -42,12 +55,15 @@ def registro(usuarios):
     return usuarios, usuario.id
 
 def iniciar_sesion(usuarios):
-    nombre_usuario = input('Nombre de usuario: ')
-    contraseña_usuario = input('Contraseña: ')
+    buscar = True
+    while buscar:
+        nombre = input('Nombre de usuario: ')
+        contraseña_usuario = input('Contraseña: ')
 
-    for usuario in usuarios:
-        if usuario.nombre == nombre_usuario and usuario.contraseña == contraseña_usuario:
-            return usuario.id
+        for usuario in usuarios:
+            if usuario.nombre_usuario == nombre and usuario.contraseña == contraseña_usuario:
+                return usuario.id
+        print('Usuario o contraseña incorrecto')
 
 def menu(id, usuarios, activos):
     opcion = '0'
@@ -79,6 +95,7 @@ def menu(id, usuarios, activos):
         return True
 
     elif opcion == '4':
+        guardar_usuarios(usuarios)
         return False
 
 
@@ -92,7 +109,11 @@ def inicio(usuarios):
         opcion = input('Opcion: ')
 
     if opcion == '1':
-        return usuarios, iniciar_sesion(usuarios)
+        if usuarios:
+            return usuarios, iniciar_sesion(usuarios)
+        else:
+            print('No hay usuarios registrados')
+            return inicio(usuarios)
     else:
         return registro(usuarios)
 
@@ -102,6 +123,7 @@ if __name__ == '__main__':
     activos = []
     activos.append(apple)
     usuarios = []
+    usuarios = leer_usuarios(usuarios)
     usuarios, id = inicio(usuarios)
 
     run = True
