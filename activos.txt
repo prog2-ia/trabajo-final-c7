@@ -1,0 +1,3 @@
+Apple 100 APPL Accion
+MsciWorld 50 MSCI Fondo
+Bitcoin 100000 BTC Cripto
