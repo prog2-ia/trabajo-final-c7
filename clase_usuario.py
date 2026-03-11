@@ -46,10 +46,16 @@ class Usuario():
     def compra(self,activo,cantidad):
         fecha = datetime.now()
         precio = activo.precio
-        self.dinero -= cantidad*precio
-        t=Transaccion(activo, self.nombre_usuario, cantidad, fecha)
-        self.transacciones.append(t)
+        if self.dinero >= cantidad*precio:
+            self.dinero -= cantidad*precio
+            t=Transaccion(activo, self.nombre_usuario, cantidad, fecha)
+            self.transacciones.append(t)
+        else:
+            print(f'No hay saldo suficiente para comprar el/los activos')
 
     def mostrar_transacciones(self):
-        for i in self.transacciones:
-            print(i)
+        if self.transacciones:
+            for i in self.transacciones:
+                print(i)
+        else:
+            print('No hay transacciones')

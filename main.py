@@ -68,7 +68,7 @@ def iniciar_sesion(usuarios):
 def menu(id, usuarios, activos):
     opcion = '0'
     while opcion not in ('1', '2', '3', '4', '5', '6', '7'):
-        print(f'Hola {usuarios[id].nombre_usuario}')
+        print(f'\nHola {usuarios[id].nombre_usuario}')
         print('Menu de opciones:')
         print('1. Comprar activo')
         print('2. Mostrar Activos')
