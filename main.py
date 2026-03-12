@@ -81,15 +81,16 @@ def menu(id, usuarios, activos):
         opcion = input('Ingrese una opcion: ')
 
     if opcion == '1':
-        verificar = False
-        nombre_activo = input('Ingrese activo: ')
+        opcion = -1
+        while opcion < 1 or opcion > len(activos) :
+            for i in range(len(activos)):
+                print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
+
+            opcion = int(input('Ingrese una opcion: '))
+            if opcion < 1 or opcion > len(activos) :
+                print('Opcion no valida...')
         cantidad = int(input('Ingrese cantidad: '))
-        for activo in activos:
-            if activo.nombre == nombre_activo:
-                usuarios[id].compra(activo, cantidad)
-                verificar = True
-        if not verificar:
-            print('Activo no encontrado')
+        usuarios[id].compra(activos[opcion-1], cantidad)
         return True
 
     elif opcion == '2':
