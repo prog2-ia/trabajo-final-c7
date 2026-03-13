@@ -69,3 +69,4 @@ class Usuario():
             self.transacciones.remove(transaccion)
         else:
             print(f'No hay transacciones')
+
