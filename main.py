@@ -67,7 +67,7 @@ def iniciar_sesion(usuarios):
 
 def menu(id, usuarios, activos):
     opcion = '0'
-    while opcion not in ('1', '2', '3', '4', '5', '6', '7'):
+    while opcion not in ('1', '2', '3', '4', '5', '6', '7','8'):
         print(f'\nHola {usuarios[id].nombre_usuario}')
         print('Menu de opciones:')
         print('1. Comprar activo')
@@ -75,11 +75,11 @@ def menu(id, usuarios, activos):
         print('3. Mostrar Transacciones')
         print('4. Ingresar Dinero')
         print('5. Mostrar Saldo Actual')
-        print('6. Sacar Dinero')
-        print('7. Cerrar Sesion')
-
+        print('6. Mostrar Saldo en activos')
+        print('7. Sacar Dinero')
+        print('8. Cerrar Sesion')
         opcion = input('Ingrese una opcion: ')
-
+        print()
     if opcion == '1':
         opcion = -1
         while opcion < 1 or opcion > len(activos) :
@@ -113,12 +113,20 @@ def menu(id, usuarios, activos):
         return True
 
     elif opcion == '6':
+        suma=0
+        for transaccion in usuarios[id].transacciones:
+            suma+=(transaccion.activo.precio*transaccion.cantidad)
+        print(suma)
+        return True
+
+    elif opcion == '7':
         print(f'Saldo actual: {usuarios[id].dinero}')
         retirar = int(input('Cuanto dinero quiere retirar: '))
         usuarios[id].sacar_dinero(retirar)
         return True
-    elif opcion == '7':
+    elif opcion == '8':
         print('Cerrando Sesion...')
+        print()
         guardar_usuarios(usuarios)
         return False
 
