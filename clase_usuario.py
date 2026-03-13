@@ -59,3 +59,13 @@ class Usuario():
                 print(i)
         else:
             print('No hay transacciones')
+
+    def vender(self,activo,cantidad,transaccion):
+        if len(self.transacciones)!=0:
+            fecha = datetime.now()
+            precio = activo.precio
+            self.dinero += cantidad * precio
+
+            self.transacciones.remove(transaccion)
+        else:
+            print(f'No hay transacciones')
