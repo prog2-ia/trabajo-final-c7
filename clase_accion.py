@@ -1,6 +1,6 @@
 from clase_activo import Activo
 
-class Accion(Activo):
+class Accion(Activo): # Clase Accion que hereda de Activo
     def __init__(self, nombre, precio, codigo):
         super().__init__(nombre, precio)
         self.codigo = codigo
@@ -11,5 +11,5 @@ class Accion(Activo):
             f'Precio: {self.precio}\n'
             f'Codigo: {self.codigo}\n')
 
-    def tipo(self):
+    def tipo(self):  # Metodo que devuelve el tipo de activo
         return 'Accion'
