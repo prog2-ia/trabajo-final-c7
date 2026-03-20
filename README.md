@@ -19,8 +19,10 @@ Para usar el programa hay que ejecutar desde python el archivo: "main.py"
 
 1. Menu inicial:
 <img width="298" height="177" alt="image" src="https://github.com/user-attachments/assets/dcd0af41-86e7-4d78-930a-92a5fe1354f7" />
+
 2. Menu Principal:
 <img width="313" height="312" alt="image" src="https://github.com/user-attachments/assets/d064b8a6-2ce1-4bc0-98d3-f15e79221be7" />
+
 3. Comprar Activos:
 <img width="289" height="476" alt="image" src="https://github.com/user-attachments/assets/f1a3e3ff-d34a-4f18-81a5-41e22958708b" />
 
