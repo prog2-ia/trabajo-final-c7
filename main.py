@@ -13,10 +13,10 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
             for linea in lineas:
                 datos = linea.strip().split(' ') # Separar los datos por espacios
                 nombre_usuario = datos[0]
-                contraseña = datos[1]
+                contrasena = datos[1]
                 email = datos[2]
                 dinero = int(datos[3])
-                usuario = Usuario(nombre_usuario, contraseña, email, dinero) # Crear objeto Usuario y añadirlo a la lista
+                usuario = Usuario(nombre_usuario, contrasena, email, dinero) # Crear objeto Usuario y anadirlo a la lista
                 usuarios.append(usuario)
 
             return usuarios
@@ -33,7 +33,7 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
 def guardar_usuarios(usuarios): # Funcion para guardar los usuarios en el archivo
     with open('usuarios.txt', 'w') as f:
         for usuario in usuarios: # Guardamos los datos separados por espacios
-            f.write(usuario.nombre_usuario + ' ' + usuario.contraseña + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
+            f.write(usuario.leer_nombre() + ' ' + usuario.leer_contrasena() + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
 
 def registro(usuarios): # Funcion para registrar un nuevo usuario
@@ -42,16 +42,16 @@ def registro(usuarios): # Funcion para registrar un nuevo usuario
         run = False
         # Pedir datos al usuario
         nombre_usuario = input('Ingrese su nombre: ')
-        contraseña = input('Ingrese su contraseña: ')
+        contrasena = input('Ingrese su contrasena: ')
         email = input('Ingrese su email: ')
         dinero = int(input('Ingrese su dinero: '))
 
         for usuario in usuarios: # Comprobar si el nombre ya existe
-            if usuario.nombre_usuario == nombre_usuario:
+            if usuario.leer_nombre() == nombre_usuario:
                 run = True
                 print('Nombre de usuario ya en uso, pruebe uno diferente')
 
-    usuario = Usuario(nombre_usuario, contraseña, email, dinero) # Crear y añadir el nuevo usuario
+    usuario = Usuario(nombre_usuario, contrasena, email, dinero) # Crear y anadir el nuevo usuario
     usuarios.append(usuario)
     return usuarios, usuario.id, True
 
@@ -59,17 +59,17 @@ def iniciar_sesion(usuarios): # Funcion para iniciar sesion
     buscar = True
     while buscar:
         nombre = input('Nombre de usuario: ')
-        contraseña_usuario = input('Contraseña: ')
+        contrasena_usuario = input('Contrasena: ')
 
-        for usuario in usuarios: # Buscar coincidencia de usuario y contraseña
-            if usuario.nombre_usuario == nombre and usuario.contraseña == contraseña_usuario:
+        for usuario in usuarios: # Buscar coincidencia de usuario y contrasena
+            if usuario.leer_nombre() == nombre and usuario.leer_contrasena() == contrasena_usuario:
                 return usuario.id
-        print('Usuario o contraseña incorrecto')
+        print('Usuario o contrasena incorrecto')
 
 def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     opcion = '0'
     while opcion not in ('1', '2', '3', '4', '5', '6', '7','8'): # Validar opcion del menu
-        print(f'\nHola {usuarios[id].nombre_usuario}')
+        print(f'\nHola {usuarios[id].leer_nombre()}')
         print('Menu de opciones:')
         print('1. Comprar activo')
         print('2. Mostrar Activos')
