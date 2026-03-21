@@ -81,7 +81,7 @@ class Usuario():
 
             fecha = datetime.now()
             precio = transaccion.activo.precio
-            self.dinero += cantidad * precio
+            self.dinero -= cantidad * precio
             if cantidad == transaccion.cantidad :
 
                 self.transacciones.remove(transaccion)
