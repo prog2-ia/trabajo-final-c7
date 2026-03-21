@@ -99,20 +99,20 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         cantidad=0
 
         if usuarios[id].transacciones:
-            while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > transaccion.cantidad:
+            while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                 cont = 0
                 for transaccion in usuarios[id].transacciones:
                     cont +=1
                     print(cont,'',transaccion.activo.nombre,' Precio: ',transaccion.activo.precio, ' Cantidad: ',transaccion.cantidad)
 
                 opcion = int(input('Ingrese una opcion: '))
-                if opcion < 1 or opcion > len(usuarios[id].transacciones) :
-                    print('Opcion no valida...')
                 cantidad = int(input('Ingrese cantidad: '))
-                if cantidad < 1 or cantidad > transaccion.cantidad:
+                if opcion < 1 or opcion > len(usuarios[id].transacciones) or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                     print('Opcion no valida...')
-                usuarios[id].vender(usuarios[id].transacciones[opcion - 1], cantidad)
-                break
+
+                else:
+                    usuarios[id].vender(usuarios[id].transacciones[opcion - 1], cantidad)
+                    break
         else:
             print('No hay acciones que vender')
 
