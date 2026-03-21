@@ -68,17 +68,18 @@ def iniciar_sesion(usuarios): # Funcion para iniciar sesion
 
 def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     opcion = '0'
-    while opcion not in ('1', '2', '3', '4', '5', '6', '7','8'): # Validar opcion del menu
+    while opcion not in ('1', '2', '3', '4', '5', '6', '7','8','9'): # Validar opcion del menu
         print(f'\nHola {usuarios[id].leer_nombre()}')
         print('Menu de opciones:')
         print('1. Comprar activo')
-        print('2. Mostrar Activos')
-        print('3. Mostrar Transacciones')
-        print('4. Ingresar Dinero')
-        print('5. Mostrar Saldo Actual')
-        print('6. Mostrar Saldo en activos')
-        print('7. Sacar Dinero')
-        print('8. Cerrar Sesion')
+        print('2. Vender activos')
+        print('3. Mostrar Activos')
+        print('4. Mostrar Transacciones')
+        print('5. Ingresar Dinero')
+        print('6. Mostrar Saldo Actual')
+        print('7. Mostrar Saldo en activos')
+        print('8. Sacar Dinero')
+        print('9. Cerrar Sesion')
         opcion = input('Ingrese una opcion: ')
         print()
     if opcion == '1': #Opcion 1: Comprar activo
@@ -93,39 +94,62 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         cantidad = int(input('Ingrese cantidad: '))
         usuarios[id].compra(activos[opcion-1], cantidad)
         return True
+    elif opcion=='2': #Opcion 2: Venta de activos
+        opcion=-1
+        cantidad=0
 
-    elif opcion == '2': # Opcion 2: Mostrar activos disponibles
+        if usuarios[id].transacciones:
+            while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > transaccion.cantidad:
+                cont = 0
+                for transaccion in usuarios[id].transacciones:
+                    cont +=1
+                    print(cont,'',transaccion.activo.nombre,' Precio: ',transaccion.activo.precio, ' Cantidad: ',transaccion.cantidad)
+
+                opcion = int(input('Ingrese una opcion: '))
+                if opcion < 1 or opcion > len(usuarios[id].transacciones) :
+                    print('Opcion no valida...')
+                cantidad = int(input('Ingrese cantidad: '))
+                if cantidad < 1 or cantidad > transaccion.cantidad:
+                    print('Opcion no valida...')
+                usuarios[id].vender(usuarios[id].transacciones[opcion - 1], cantidad)
+                break
+        else:
+            print('No hay acciones que vender')
+
+        return True
+
+    elif opcion == '3': # Opcion 3: Mostrar activos disponibles
         print('Activos: ')
         for activo in activos:
             print(f'Nombre: {activo.nombre}, Precio: {activo.precio}')
         return True
 
-    elif opcion == '3': # Opcion 3: Mostrar historial de transacciones
+    elif opcion == '4': # Opcion 4: Mostrar historial de transacciones
         usuarios[id].mostrar_transacciones()
         return True
 
-    elif opcion == '4': # Opcion 4: Ingresar dinero
+    elif opcion == '5': # Opcion 5: Ingresar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         ingreso = int(input('Cuanto dinero quiere ingresar: '))
         usuarios[id].agregar_dinero(ingreso)
         return True
-    elif opcion == '5': # Opcion 5: Mostrar saldo disponible
+    elif opcion == '6': # Opcion 6: Mostrar saldo disponible
         print(f'Saldo actual: {usuarios[id].dinero}')
         return True
 
-    elif opcion == '6': # Opcion 6: Calcular valor total en activos
+    elif opcion == '7': # Opcion 7: Calcular valor total en activos
         suma=0
         for transaccion in usuarios[id].transacciones:
             suma+=(transaccion.activo.precio*transaccion.cantidad)
         print(suma)
         return True
 
-    elif opcion == '7': # Opcion 7: Retirar dinero
+    elif opcion == '8': # Opcion 8: Retirar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         retirar = int(input('Cuanto dinero quiere retirar: '))
         usuarios[id].sacar_dinero(retirar)
         return True
-    elif opcion == '8': # Opcion 8: Cerrar sesión
+    elif opcion == '9': # Opcion 9: Cerrar sesión
         print('Cerrando Sesion...')
         print()
         guardar_usuarios(usuarios) # Guardar usuarios antes de salir
