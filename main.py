@@ -91,7 +91,11 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
             opcion = int(input('Ingrese una opcion: '))
             if opcion < 1 or opcion > len(activos) :
                 print('Opcion no valida...')
-        cantidad = int(input('Ingrese cantidad: '))
+        cantidad = 0
+        while cantidad < 1:
+            cantidad = int(input('Ingrese cantidad: '))
+            if cantidad < 1:
+                print('Opcion no valida...')
         usuarios[id].compra(activos[opcion-1], cantidad)
         return True
     elif opcion=='2': #Opcion 2: Venta de activos
