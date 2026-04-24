@@ -20,7 +20,7 @@ class Usuario():
         return (f'Usuario(id={self.id}, '
                 f'nombre_usuario={self.nombre_usuario}, '
                 f'contraseña={self.contraseña}, '
-                f'email={self.email}, '
+                f'email={self.email}, ' 
                 f'dinero={self.dinero})')
 
     def agregar_dinero(self, valor): # Metodo para agregar dinero

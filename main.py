@@ -186,9 +186,9 @@ def inicio(usuarios): # Menú inicial del programa
 
 if __name__ == '__main__': # Inicio del programa
 
-    activos = []
+    activos: list = []
     activos = cargar_activos(activos)
-    usuarios = []
+    usuarios: list = []
     usuarios = leer_usuarios(usuarios)
 
     run = True
