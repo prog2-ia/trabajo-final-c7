@@ -2,7 +2,7 @@ from clase_usuario import Usuario
 from clase_accion import Accion
 from clase_cripto import Cripto
 from clase_fondo import Fondo
-
+import random
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
     try:
@@ -82,8 +82,10 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         print('9. Cerrar Sesion')
         opcion = input('Ingrese una opcion: ')
         print()
+
     if opcion == '1': #Opcion 1: Comprar activo
         opcion = -1
+        activos = activoRandom(activos)
         while opcion < 1 or opcion > len(activos) : # Validar eleccion de activo
             for i in range(len(activos)):
                 print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
@@ -101,7 +103,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     elif opcion=='2': #Opcion 2: Venta de activos
         opcion=-1
         cantidad=0
-
+        activos = activoRandom(activos)
         if usuarios[id].transacciones:
             while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                 cont = 0
@@ -124,6 +126,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
     elif opcion == '3': # Opcion 3: Mostrar activos disponibles
         print('Activos: ')
+        activos = activoRandom(activos)
         for activo in activos:
             print(f'Nombre: {activo.nombre}, Precio: {activo.precio}')
         return True
@@ -161,6 +164,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
 
 def cargar_activos(activos): # Funcion para cargar activos desde archivo
+    activos=[]
     try:
         with open('activos.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
@@ -211,6 +215,28 @@ def inicio(usuarios): # Menú inicial del programa
             return registro(usuarios)
         elif opcion == '3':
             return usuarios, None, False
+
+
+def activoRandom(activos):
+    with open('activos.txt', 'r', encoding='utf-8') as f:
+        lineas = f.readlines()
+
+    nuevas_lineas = []
+
+
+    for linea in lineas:
+        datos = linea.strip().split(' ')
+        precio = int(datos[1])
+
+        rand = random.randint(90, 110)
+        nuev = int(precio * (rand / 100))
+
+        nuevas_lineas.append(f"{datos[0]} {nuev} {datos[2]} {datos[3]}\n")
+
+    with open('activos.txt', 'w', encoding='utf-8') as f:
+        f.writelines(nuevas_lineas)
+    return cargar_activos(activos)
+
 
 if __name__ == '__main__': # Inicio del programa
 
