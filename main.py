@@ -6,7 +6,7 @@ from clase_fondo import Fondo
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
     try:
-        with open('usuarios.txt', 'r') as f:
+        with open('usuarios.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
 
         if lineas: # Si hay lineas en el archivo
@@ -25,13 +25,13 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
             return usuarios
 
     except FileNotFoundError: # Si el archivo no existe, se crea uno vacio
-        with open('usuarios.txt', 'w'):
+        with open('usuarios.txt', 'w',encoding='utf-8'):
             pass
         usuarios = []
         return usuarios
 
 def guardar_usuarios(usuarios): # Funcion para guardar los usuarios en el archivo
-    with open('usuarios.txt', 'w') as f:
+    with open('usuarios.txt', 'w',encoding='utf-8') as f:
         for usuario in usuarios: # Guardamos los datos separados por espacios
             f.write(usuario.leer_nombre() + ' ' + usuario.leer_contrasena() + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
@@ -162,7 +162,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
 def cargar_activos(activos): # Funcion para cargar activos desde archivo
     try:
-        with open('activos.txt', 'r') as f:
+        with open('activos.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
 
         if lineas:
@@ -186,7 +186,7 @@ def cargar_activos(activos): # Funcion para cargar activos desde archivo
             return activos
 
     except FileNotFoundError:
-        with open('activos.txt', 'w'):
+        with open('activos.txt', 'w',encoding='utf-8'):
             pass
         activos = []
         return activos
