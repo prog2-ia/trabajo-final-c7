@@ -69,6 +69,7 @@ def iniciar_sesion(usuarios): # Funcion para iniciar sesion
 def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     opcion = '0'
     while opcion not in ('1', '2', '3', '4', '5', '6', '7','8','9'): # Validar opcion del menu
+        activos = activoRandom(activos)
         print(f'\nHola {usuarios[id].leer_nombre()}')
         print('Menu de opciones:')
         print('1. Comprar activo')
@@ -85,7 +86,6 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
     if opcion == '1': #Opcion 1: Comprar activo
         opcion = -1
-        activos = activoRandom(activos)
         while opcion < 1 or opcion > len(activos) : # Validar eleccion de activo
             for i in range(len(activos)):
                 print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
@@ -99,17 +99,26 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
             if cantidad < 1:
                 print('Opcion no valida...')
         usuarios[id].compra(activos[opcion-1], cantidad)
-        return True
+        return True,activos
     elif opcion=='2': #Opcion 2: Venta de activos
         opcion=-1
         cantidad=0
-        activos = activoRandom(activos)
         if usuarios[id].transacciones:
             while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                 cont = 0
                 for transaccion in usuarios[id].transacciones:
-                    cont +=1
-                    print(cont,'',transaccion.activo.nombre,' Precio: ',transaccion.activo.precio, ' Cantidad: ',transaccion.cantidad)
+                    cont += 1
+
+                    precio_actual = transaccion.activo.precio
+
+                    for activo in activos:
+                        if activo.nombre == transaccion.activo.nombre:
+                            precio_actual = activo.precio
+                            break
+
+                    print(cont, '', transaccion.activo.nombre,
+                          ' Precio: ', precio_actual,
+                          ' Cantidad: ', transaccion.cantidad)
 
                 opcion = int(input('Ingrese una opcion: '))
                 cantidad = int(input('Ingrese cantidad: '))
@@ -117,50 +126,50 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
                     print('Opcion no valida...')
 
                 else:
-                    usuarios[id].vender(usuarios[id].transacciones[opcion - 1], cantidad)
+                    usuarios[id].vender(usuarios[id].transacciones[opcion - 1],cantidad,activos)
                     break
         else:
             print('No hay acciones que vender')
 
-        return True
+        return True,activos
 
     elif opcion == '3': # Opcion 3: Mostrar activos disponibles
         print('Activos: ')
         activos = activoRandom(activos)
         for activo in activos:
             print(f'Nombre: {activo.nombre}, Precio: {activo.precio}')
-        return True
+        return True,activos
 
     elif opcion == '4': # Opcion 4: Mostrar historial de transacciones
         usuarios[id].mostrar_transacciones()
-        return True
+        return True,activos
 
     elif opcion == '5': # Opcion 5: Ingresar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         ingreso = int(input('Cuanto dinero quiere ingresar: '))
         usuarios[id].agregar_dinero(ingreso)
-        return True
+        return True,activos
     elif opcion == '6': # Opcion 6: Mostrar saldo disponible
         print(f'Saldo actual: {usuarios[id].dinero}')
-        return True
+        return True,activos
 
     elif opcion == '7': # Opcion 7: Calcular valor total en activos
         suma=0
         for transaccion in usuarios[id].transacciones:
             suma+=(transaccion.activo.precio*transaccion.cantidad)
         print(suma)
-        return True
+        return True,activos
 
     elif opcion == '8': # Opcion 8: Retirar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         retirar = int(input('Cuanto dinero quiere retirar: '))
         usuarios[id].sacar_dinero(retirar)
-        return True
+        return True,activos
     elif opcion == '9': # Opcion 9: Cerrar sesión
         print('Cerrando Sesion...')
         print()
         guardar_usuarios(usuarios) # Guardar usuarios antes de salir
-        return False
+        return False,activos
 
 
 def cargar_activos(activos): # Funcion para cargar activos desde archivo
@@ -227,11 +236,12 @@ def activoRandom(activos):
     for linea in lineas:
         datos = linea.strip().split(' ')
         precio = int(datos[1])
-
         rand = random.randint(90, 110)
         nuev = int(precio * (rand / 100))
-
-        nuevas_lineas.append(f"{datos[0]} {nuev} {datos[2]} {datos[3]}\n")
+        if nuev<10:
+            nuevas_lineas.append(f'{datos[0]} {precio} {datos[2]} {datos[3]}\n')
+        else:
+            nuevas_lineas.append(f'{datos[0]} {nuev} {datos[2]} {datos[3]}\n')
 
     with open('activos.txt', 'w', encoding='utf-8') as f:
         f.writelines(nuevas_lineas)
@@ -253,4 +263,4 @@ if __name__ == '__main__': # Inicio del programa
         else:
             sesion = False
         while sesion:
-            sesion = menu(id, usuarios, activos)
+            sesion,activos = menu(id, usuarios, activos)
