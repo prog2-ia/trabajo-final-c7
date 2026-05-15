@@ -1,6 +1,6 @@
 from clase_transaccion import Transaccion
 from datetime import datetime
-
+from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
 
@@ -68,7 +68,7 @@ class Usuario():
                 t=Transaccion(activo, self.leer_nombre(), cantidad, fecha)
                 self.transacciones.append(t)
         else:
-            print(f'No hay saldo suficiente para comprar el/los activos')
+            raise ErrorSaldoInsuficiente(self.dinero,cantidad*precio)
 
     def mostrar_transacciones(self):
         if self.transacciones:
@@ -78,7 +78,7 @@ class Usuario():
             print('No hay transacciones')
 
     def vender(self, transaccion, cantidad, activos):
-
+        assert cantidad <= transaccion.cantidad, 'No puedes vender mas activos de los que tienes'
         precio_actual = 0
 
         for activo in activos:

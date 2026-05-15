@@ -3,6 +3,7 @@ from clase_accion import Accion
 from clase_cripto import Cripto
 from clase_fondo import Fondo
 import random
+from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
     try:
@@ -44,7 +45,12 @@ def registro(usuarios): # Funcion para registrar un nuevo usuario
         nombre_usuario = input('Ingrese su nombre: ')
         contrasena = input('Ingrese su contrasena: ')
         email = input('Ingrese su email: ')
-        dinero = int(input('Ingrese su dinero: '))
+        while True:
+            try:
+                dinero = int(input('Ingrese su dinero: '))
+                break
+            except ValueError:
+                print('Debe ingresar un numero')
 
         for usuario in usuarios: # Comprobar si el nombre ya existe
             if usuario.leer_nombre() == nombre_usuario:
@@ -90,15 +96,27 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
             for i in range(len(activos)):
                 print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
 
-            opcion = int(input('Ingrese una opcion: '))
+            try:
+                opcion = int(input('Ingrese una opcion: '))
+            except ValueError:
+                print('Debe ingresar un numero')
+                opcion = -1
             if opcion < 1 or opcion > len(activos) :
                 print('Opcion no valida...')
         cantidad = 0
         while cantidad < 1:
-            cantidad = int(input('Ingrese cantidad: '))
+            try:
+                cantidad = int(input('Ingrese cantidad: '))
+            except ValueError:
+                print('Debe ingresar un numero')
+                cantidad = 0
             if cantidad < 1:
                 print('Opcion no valida...')
-        usuarios[id].compra(activos[opcion-1], cantidad)
+        try:
+            usuarios[id].compra(activos[opcion - 1], cantidad)
+
+        except ErrorSaldoInsuficiente as e:
+            print(e)
         return True,activos
     elif opcion=='2': #Opcion 2: Venta de activos
         opcion=-1
@@ -116,12 +134,15 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
                             precio_actual = activo.precio
                             break
 
-                    print(cont, '', transaccion.activo.nombre,
-                          ' Precio: ', precio_actual,
-                          ' Cantidad: ', transaccion.cantidad)
+                    print(cont, '', transaccion.activo.nombre,' Precio: ', precio_actual,' Cantidad: ', transaccion.cantidad)
 
-                opcion = int(input('Ingrese una opcion: '))
-                cantidad = int(input('Ingrese cantidad: '))
+                try:
+                    opcion = int(input('Ingrese una opcion: '))
+                    cantidad = int(input('Ingrese cantidad: '))
+                except ValueError:
+                    print('Debe ingresar un numero')
+                    opcion = -1
+                    cantidad = 0
                 if opcion < 1 or opcion > len(usuarios[id].transacciones) or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                     print('Opcion no valida...')
 
@@ -146,7 +167,11 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
     elif opcion == '5': # Opcion 5: Ingresar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
-        ingreso = int(input('Cuanto dinero quiere ingresar: '))
+        try:
+            ingreso = int(input('Cuanto dinero quiere ingresar: '))
+        except ValueError:
+            print('Debe ingresar un numero')
+            ingreso = 0
         usuarios[id].agregar_dinero(ingreso)
         return True,activos
     elif opcion == '6': # Opcion 6: Mostrar saldo disponible
@@ -162,7 +187,11 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
 
     elif opcion == '8': # Opcion 8: Retirar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
-        retirar = int(input('Cuanto dinero quiere retirar: '))
+        try:
+            retirar = int(input('Cuanto dinero quiere retirar: '))
+        except ValueError:
+            print('Debe ingresar un numero')
+            retirar = 0
         usuarios[id].sacar_dinero(retirar)
         return True,activos
     elif opcion == '9': # Opcion 9: Cerrar sesión
