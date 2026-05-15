@@ -1,6 +1,8 @@
 from clase_transaccion import Transaccion
 from datetime import datetime
 from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
+from clase_ErrorRetirada import ErrorRetirada
+
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
 
@@ -44,7 +46,7 @@ class Usuario():
             self.dinero -= valor
             print(f'Se han retirado correctamente {valor}$, saldo actual: {self.dinero}$')
         else:
-            print(f'No tiene {valor}$ en su cuenta')
+            raise ErrorRetirada(self.dinero, valor)
 
     @classmethod
     def obtener_num_usuarios(cls): # Metodo de clase para obtener la cantidad de usuarios

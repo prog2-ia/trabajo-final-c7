@@ -4,6 +4,7 @@ from clase_cripto import Cripto
 from clase_fondo import Fondo
 import random
 from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
+from clase_ErrorRetirada import ErrorRetirada
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
     try:
@@ -192,7 +193,11 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         except ValueError:
             print('Debe ingresar un numero')
             retirar = 0
-        usuarios[id].sacar_dinero(retirar)
+        try:
+            usuarios[id].sacar_dinero(retirar)
+
+        except ErrorRetirada as e:
+            print(e)
         return True,activos
     elif opcion == '9': # Opcion 9: Cerrar sesión
         print('Cerrando Sesion...')
