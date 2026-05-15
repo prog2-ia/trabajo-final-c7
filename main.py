@@ -2,6 +2,7 @@ from clase_usuario import Usuario
 from clase_accion import Accion
 from clase_cripto import Cripto
 from clase_fondo import Fondo
+from clase_transaccion import Transaccion
 
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
@@ -29,6 +30,37 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
             pass
         usuarios = []
         return usuarios
+def guardar_activos_usuario(usuarios, id):
+    nombre_fichero = f"usuario_activo_{usuarios[id].leer_nombre()}.txt"
+    with open(nombre_fichero, 'w',encoding='utf-8') as f:
+        for transaccion in usuarios[id].transacciones:
+            f.write(str(transaccion))
+
+def leer_activos_usuario(usuarios, id, activos):
+    i = 0
+    try:
+
+        nombre_fichero = f'usuario_activo_{usuarios[id].leer_nombre()}.txt'
+        with open(nombre_fichero, 'r',encoding='utf-8') as f:
+            lineas = f.readlines()
+            while i < len(lineas):
+                nombre = lineas[i].split()[1]
+                nombre_activo = lineas[i+1].split()[1]
+                cantidad = int(lineas[i+2].split()[1])
+                fecha = lineas[i+4][7:]
+                j = 0
+                for activo in activos:
+                    if activo.nombre == nombre_activo:
+                        break
+                    j += 1
+                t = Transaccion(activos[j], nombre, cantidad, fecha)
+                usuarios[id].transacciones.append(t)
+                i+=5
+
+
+    except FileNotFoundError:
+        print('Error')
+
 
 def guardar_usuarios(usuarios): # Funcion para guardar los usuarios en el archivo
     with open('usuarios.txt', 'w',encoding='utf-8') as f:
@@ -110,7 +142,9 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
                     print(cont,'',transaccion.activo.nombre,' Precio: ',transaccion.activo.precio, ' Cantidad: ',transaccion.cantidad)
 
                 opcion = int(input('Ingrese una opcion: '))
+                if opcion == 0: break
                 cantidad = int(input('Ingrese cantidad: '))
+
                 if opcion < 1 or opcion > len(usuarios[id].transacciones) or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                     print('Opcion no valida...')
 
@@ -157,6 +191,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         print('Cerrando Sesion...')
         print()
         guardar_usuarios(usuarios) # Guardar usuarios antes de salir
+        guardar_activos_usuario(usuarios, id)
         return False
 
 
@@ -224,6 +259,7 @@ if __name__ == '__main__': # Inicio del programa
         usuarios, id, run = inicio(usuarios)
         if run == True:
             sesion = True
+            leer_activos_usuario(usuarios, id, activos)
         else:
             sesion = False
         while sesion:
