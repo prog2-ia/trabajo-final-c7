@@ -2,6 +2,9 @@ from clase_usuario import Usuario
 from clase_accion import Accion
 from clase_cripto import Cripto
 from clase_fondo import Fondo
+import random
+from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
+from clase_ErrorRetirada import ErrorRetirada
 from clase_transaccion import Transaccion
 
 
@@ -47,7 +50,7 @@ def leer_activos_usuario(usuarios, id, activos):
                 nombre = lineas[i].split()[1]
                 nombre_activo = lineas[i+1].split()[1]
                 cantidad = int(lineas[i+2].split()[1])
-                fecha = lineas[i+4][7:]
+                fecha = lineas[i+4][7:].strip()
                 j = 0
                 for activo in activos:
                     if activo.nombre == nombre_activo:
@@ -76,7 +79,12 @@ def registro(usuarios): # Funcion para registrar un nuevo usuario
         nombre_usuario = input('Ingrese su nombre: ')
         contrasena = input('Ingrese su contrasena: ')
         email = input('Ingrese su email: ')
-        dinero = int(input('Ingrese su dinero: '))
+        while True:
+            try:
+                dinero = int(input('Ingrese su dinero: '))
+                break
+            except ValueError:
+                print('Debe ingresar un numero')
 
         for usuario in usuarios: # Comprobar si el nombre ya existe
             if usuario.leer_nombre() == nombre_usuario:
@@ -101,6 +109,7 @@ def iniciar_sesion(usuarios): # Funcion para iniciar sesion
 def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     opcion = '0'
     while opcion not in ('1', '2', '3', '4', '5', '6', '7','8','9'): # Validar opcion del menu
+        activos = activoRandom(activos)
         print(f'\nHola {usuarios[id].leer_nombre()}')
         print('Menu de opciones:')
         print('1. Comprar activo')
@@ -114,88 +123,125 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         print('9. Cerrar Sesion')
         opcion = input('Ingrese una opcion: ')
         print()
+
     if opcion == '1': #Opcion 1: Comprar activo
         opcion = -1
         while opcion < 1 or opcion > len(activos) : # Validar eleccion de activo
             for i in range(len(activos)):
                 print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
 
-            opcion = int(input('Ingrese una opcion: '))
+            try:
+                opcion = int(input('Ingrese una opcion: '))
+            except ValueError:
+                print('Debe ingresar un numero')
+                opcion = -1
             if opcion < 1 or opcion > len(activos) :
                 print('Opcion no valida...')
         cantidad = 0
         while cantidad < 1:
-            cantidad = int(input('Ingrese cantidad: '))
+            try:
+                cantidad = int(input('Ingrese cantidad: '))
+            except ValueError:
+                print('Debe ingresar un numero')
+                cantidad = 0
             if cantidad < 1:
                 print('Opcion no valida...')
-        usuarios[id].compra(activos[opcion-1], cantidad)
-        return True
+        try:
+            usuarios[id].compra(activos[opcion - 1], cantidad)
+
+        except ErrorSaldoInsuficiente as e:
+            print(e)
+        return True,activos
     elif opcion=='2': #Opcion 2: Venta de activos
         opcion=-1
         cantidad=0
-
         if usuarios[id].transacciones:
             while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                 cont = 0
                 for transaccion in usuarios[id].transacciones:
-                    cont +=1
-                    print(cont,'',transaccion.activo.nombre,' Precio: ',transaccion.activo.precio, ' Cantidad: ',transaccion.cantidad)
+                    cont += 1
 
-                opcion = int(input('Ingrese una opcion: '))
-                if opcion == 0: break
-                cantidad = int(input('Ingrese cantidad: '))
+                    precio_actual = transaccion.activo.precio
 
+                    for activo in activos:
+                        if activo.nombre == transaccion.activo.nombre:
+                            precio_actual = activo.precio
+                            break
+
+                    print(cont, '', transaccion.activo.nombre,' Precio: ', precio_actual,' Cantidad: ', transaccion.cantidad)
+
+                try:
+                    opcion = int(input('Ingrese una opcion: '))
+                    cantidad = int(input('Ingrese cantidad: '))
+                except ValueError:
+                    print('Debe ingresar un numero')
+                    opcion = -1
+                    cantidad = 0
                 if opcion < 1 or opcion > len(usuarios[id].transacciones) or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                     print('Opcion no valida...')
 
                 else:
-                    usuarios[id].vender(usuarios[id].transacciones[opcion - 1], cantidad)
+                    usuarios[id].vender(usuarios[id].transacciones[opcion - 1],cantidad,activos)
                     break
         else:
             print('No hay acciones que vender')
 
-        return True
+        return True,activos
 
     elif opcion == '3': # Opcion 3: Mostrar activos disponibles
         print('Activos: ')
+        activos = activoRandom(activos)
         for activo in activos:
             print(f'Nombre: {activo.nombre}, Precio: {activo.precio}')
-        return True
+        return True,activos
 
     elif opcion == '4': # Opcion 4: Mostrar historial de transacciones
         usuarios[id].mostrar_transacciones()
-        return True
+        return True,activos
 
     elif opcion == '5': # Opcion 5: Ingresar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
-        ingreso = int(input('Cuanto dinero quiere ingresar: '))
+        try:
+            ingreso = int(input('Cuanto dinero quiere ingresar: '))
+        except ValueError:
+            print('Debe ingresar un numero')
+            ingreso = 0
         usuarios[id].agregar_dinero(ingreso)
-        return True
+        return True,activos
     elif opcion == '6': # Opcion 6: Mostrar saldo disponible
         print(f'Saldo actual: {usuarios[id].dinero}')
-        return True
+        return True,activos
 
     elif opcion == '7': # Opcion 7: Calcular valor total en activos
         suma=0
         for transaccion in usuarios[id].transacciones:
             suma+=(transaccion.activo.precio*transaccion.cantidad)
         print(suma)
-        return True
+        return True,activos
 
     elif opcion == '8': # Opcion 8: Retirar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
-        retirar = int(input('Cuanto dinero quiere retirar: '))
-        usuarios[id].sacar_dinero(retirar)
-        return True
+        try:
+            retirar = int(input('Cuanto dinero quiere retirar: '))
+        except ValueError:
+            print('Debe ingresar un numero')
+            retirar = 0
+        try:
+            usuarios[id].sacar_dinero(retirar)
+
+        except ErrorRetirada as e:
+            print(e)
+        return True,activos
     elif opcion == '9': # Opcion 9: Cerrar sesión
         print('Cerrando Sesion...')
         print()
         guardar_usuarios(usuarios) # Guardar usuarios antes de salir
         guardar_activos_usuario(usuarios, id)
-        return False
+        return False,activos
 
 
 def cargar_activos(activos): # Funcion para cargar activos desde archivo
+    activos=[]
     try:
         with open('activos.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
@@ -247,6 +293,29 @@ def inicio(usuarios): # Menú inicial del programa
         elif opcion == '3':
             return usuarios, None, False
 
+
+def activoRandom(activos):
+    with open('activos.txt', 'r', encoding='utf-8') as f:
+        lineas = f.readlines()
+
+    nuevas_lineas = []
+
+
+    for linea in lineas:
+        datos = linea.strip().split(' ')
+        precio = int(datos[1])
+        rand = random.randint(90, 110)
+        nuev = int(precio * (rand / 100))
+        if nuev<10:
+            nuevas_lineas.append(f'{datos[0]} {precio} {datos[2]} {datos[3]}\n')
+        else:
+            nuevas_lineas.append(f'{datos[0]} {nuev} {datos[2]} {datos[3]}\n')
+
+    with open('activos.txt', 'w', encoding='utf-8') as f:
+        f.writelines(nuevas_lineas)
+    return cargar_activos(activos)
+
+
 if __name__ == '__main__': # Inicio del programa
 
     activos: list = []
@@ -263,4 +332,4 @@ if __name__ == '__main__': # Inicio del programa
         else:
             sesion = False
         while sesion:
-            sesion = menu(id, usuarios, activos)
+            sesion,activos = menu(id, usuarios, activos)

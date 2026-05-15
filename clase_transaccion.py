@@ -20,7 +20,7 @@ class Transaccion():
                 f'Nombre: {self.activo.nombre}\n'
                 f'Cantidad: {self.cantidad}\n'
                 f'Tipo de activo: {self.tipo()}\n'
-                f'Fecha: {self.fecha}')
+                f'Fecha: {self.fecha}\n')
 
     def contador(self): # Devuelve el numero total de transacciones creadas
         return self.cont

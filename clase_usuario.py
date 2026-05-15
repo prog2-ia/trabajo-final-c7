@@ -1,5 +1,7 @@
 from clase_transaccion import Transaccion
 from datetime import datetime
+from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
+from clase_ErrorRetirada import ErrorRetirada
 
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
@@ -44,7 +46,7 @@ class Usuario():
             self.dinero -= valor
             print(f'Se han retirado correctamente {valor}$, saldo actual: {self.dinero}$')
         else:
-            print(f'No tiene {valor}$ en su cuenta')
+            raise ErrorRetirada(self.dinero, valor)
 
     @classmethod
     def obtener_num_usuarios(cls): # Metodo de clase para obtener la cantidad de usuarios
@@ -68,7 +70,7 @@ class Usuario():
                 t=Transaccion(activo, self.leer_nombre(), cantidad, fecha)
                 self.transacciones.append(t)
         else:
-            print(f'No hay saldo suficiente para comprar el/los activos')
+            raise ErrorSaldoInsuficiente(self.dinero,cantidad*precio)
 
     def mostrar_transacciones(self):
         if self.transacciones:
@@ -77,14 +79,18 @@ class Usuario():
         else:
             print('No hay transacciones')
 
-    def vender(self,transaccion,cantidad):
+    def vender(self, transaccion, cantidad, activos):
+        assert cantidad <= transaccion.cantidad, 'No puedes vender mas activos de los que tienes'
+        precio_actual = 0
 
-            fecha = datetime.now()
-            precio = transaccion.activo.precio
-            self.dinero += cantidad * precio
-            if cantidad == transaccion.cantidad :
+        for activo in activos:
+            if activo.nombre == transaccion.activo.nombre:
+                precio_actual = activo.precio
+                break
 
-                self.transacciones.remove(transaccion)
-            else:
-                transaccion.cantidad -= cantidad
+        self.dinero += cantidad * precio_actual
 
+        if cantidad == transaccion.cantidad:
+            self.transacciones.remove(transaccion)
+        else:
+            transaccion.cantidad -= cantidad
