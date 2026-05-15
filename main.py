@@ -326,11 +326,8 @@ if __name__ == '__main__': # Inicio del programa
     usuarios = leer_usuarios(usuarios)
     backup = GestorBackup.restaurar_sistema()
 
-    hay_backup = False
-
-    if backup is not None:
+    if not usuarios and backup is not None:
         usuarios = backup
-        hay_backup = True
 
     run = True
     while run: # Bucle principal del programa
@@ -338,8 +335,7 @@ if __name__ == '__main__': # Inicio del programa
         if run == True:
             sesion = True
 
-            if not hay_backup:
-                leer_activos_usuario(usuarios, id, activos)
+            leer_activos_usuario(usuarios, id, activos)
         else:
             sesion = False
         while sesion:
