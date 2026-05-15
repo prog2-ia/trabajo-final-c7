@@ -218,3 +218,5 @@ __marimo__/
 # Fichero
 usuarios.txt
 usuario_activo_*.txt
+
+backups/

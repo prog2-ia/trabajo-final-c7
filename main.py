@@ -2,10 +2,11 @@ from clase_usuario import Usuario
 from clase_accion import Accion
 from clase_cripto import Cripto
 from clase_fondo import Fondo
-import random
 from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
 from clase_ErrorRetirada import ErrorRetirada
 from clase_transaccion import Transaccion
+from clase_GestorBackup import GestorBackup
+import random
 
 
 def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
@@ -237,6 +238,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         print()
         guardar_usuarios(usuarios) # Guardar usuarios antes de salir
         guardar_activos_usuario(usuarios, id)
+        GestorBackup.crear_backup(usuarios)
         return False,activos
 
 
@@ -322,13 +324,22 @@ if __name__ == '__main__': # Inicio del programa
     activos = cargar_activos(activos)
     usuarios: list = []
     usuarios = leer_usuarios(usuarios)
+    backup = GestorBackup.restaurar_sistema()
+
+    hay_backup = False
+
+    if backup is not None:
+        usuarios = backup
+        hay_backup = True
 
     run = True
     while run: # Bucle principal del programa
         usuarios, id, run = inicio(usuarios)
         if run == True:
             sesion = True
-            leer_activos_usuario(usuarios, id, activos)
+
+            if not hay_backup:
+                leer_activos_usuario(usuarios, id, activos)
         else:
             sesion = False
         while sesion:
