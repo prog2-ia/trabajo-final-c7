@@ -1,6 +1,7 @@
 from clase_usuario import Usuario
 from clase_accion import Accion
 from clase_cripto import Cripto
+from clase_bono import Bono
 from clase_fondo import Fondo
 from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
 from clase_ErrorRetirada import ErrorRetirada
@@ -35,19 +36,19 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
         usuarios = []
         return usuarios
 def guardar_activos_usuario(usuarios, id):
-    nombre_fichero = f"usuario_activo_{usuarios[id].leer_nombre()}.txt"
+    nombre_fichero = f"usuario_activo_{usuarios[id].leer_nombre()}.txt" # Creamos el nombre del archivo
     with open(nombre_fichero, 'w',encoding='utf-8') as f:
-        for transaccion in usuarios[id].transacciones:
+        for transaccion in usuarios[id].transacciones: # Escribimos los datos en el fichero
             f.write(str(transaccion))
 
 def leer_activos_usuario(usuarios, id, activos):
     i = 0
     try:
 
-        nombre_fichero = f'usuario_activo_{usuarios[id].leer_nombre()}.txt'
+        nombre_fichero = f'usuario_activo_{usuarios[id].leer_nombre()}.txt' # Creamos el nomvre
         with open(nombre_fichero, 'r',encoding='utf-8') as f:
             lineas = f.readlines()
-            while i < len(lineas):
+            while i < len(lineas): # Guardamos  cada linea segun la informacion
                 nombre = lineas[i].split()[1]
                 nombre_activo = lineas[i+1].split()[1]
                 cantidad = int(lineas[i+2].split()[1])
@@ -57,8 +58,8 @@ def leer_activos_usuario(usuarios, id, activos):
                     if activo.nombre == nombre_activo:
                         break
                     j += 1
-                t = Transaccion(activos[j], nombre, cantidad, fecha)
-                usuarios[id].transacciones.append(t)
+                t = Transaccion(activos[j], nombre, cantidad, fecha) # Creamos la transaccion
+                usuarios[id].transacciones.append(t) # La añadimos al usuario
                 i+=5
 
 
@@ -132,7 +133,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
                 print(f'{i+1}. {activos[i].nombre}: {activos[i].precio}$')
 
             try:
-                opcion = int(input('Ingrese una opcion: '))
+                opcion = int(input('Ingrese una opcion: ')) # Guardamos la opcion con sus excepciones
             except ValueError:
                 print('Debe ingresar un numero')
                 opcion = -1
@@ -141,7 +142,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         cantidad = 0
         while cantidad < 1:
             try:
-                cantidad = int(input('Ingrese cantidad: '))
+                cantidad = int(input('Ingrese cantidad: ')) # Guardamos la cantidad y sus excepciones
             except ValueError:
                 print('Debe ingresar un numero')
                 cantidad = 0
@@ -156,7 +157,7 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
     elif opcion=='2': #Opcion 2: Venta de activos
         opcion=-1
         cantidad=0
-        if usuarios[id].transacciones:
+        if usuarios[id].transacciones: # Mientras la opción o la cantidad no sean válidas, seguimos pidiendo datos
             while opcion < 1 or opcion > len(usuarios[id].transacciones)or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                 cont = 0
                 for transaccion in usuarios[id].transacciones:
@@ -168,16 +169,17 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
                         if activo.nombre == transaccion.activo.nombre:
                             precio_actual = activo.precio
                             break
-
+                    # Mostramos la info de cada transacción
                     print(cont, '', transaccion.activo.nombre,' Precio: ', precio_actual,' Cantidad: ', transaccion.cantidad)
 
-                try:
+                try: # Pedimos al usuario qué transacción quiere vender y cuánta cantidad
                     opcion = int(input('Ingrese una opcion: '))
                     cantidad = int(input('Ingrese cantidad: '))
                 except ValueError:
                     print('Debe ingresar un numero')
                     opcion = -1
                     cantidad = 0
+                 # Validamos que la opción y la cantidad sean correctas
                 if opcion < 1 or opcion > len(usuarios[id].transacciones) or cantidad < 1 or cantidad > usuarios[id].transacciones[opcion-1].cantidad:
                     print('Opcion no valida...')
 
@@ -254,14 +256,16 @@ def cargar_activos(activos): # Funcion para cargar activos desde archivo
                 nombre = datos[0]
                 precio = int(datos[1])
                 codigo = datos[2]
-                tipo =  datos[3].strip()
+                tipo =  datos[3].strip() # Guardamos los datos segun los espacios en el fichero
                 if tipo == 'Accion':
                     activo = Accion(nombre, precio, codigo)
                 elif tipo == 'Fondo':
                     activo = Fondo(nombre, precio, codigo)
+                elif tipo == 'Bono':
+                    activo = Bono(nombre, precio, codigo)
                 else:
                     activo = Cripto(nombre, precio, codigo)
-                activos.append(activo)
+                activos.append(activo) # Creamos el activo segun su tipo
 
             return activos
         else:
@@ -285,15 +289,15 @@ def inicio(usuarios): # Menú inicial del programa
 
         if opcion == '1':
             if usuarios:
-                return usuarios, iniciar_sesion(usuarios), True
+                return usuarios, iniciar_sesion(usuarios), True # Iniciamos sesion
             else:
                 print('No hay usuarios registrados')
                 opcion = '0'
 
         elif opcion == '2':
-            return registro(usuarios)
+            return registro(usuarios) # Registramos
         elif opcion == '3':
-            return usuarios, None, False
+            return usuarios, None, False # Nos salimos
 
 
 def activoRandom(activos):
@@ -307,15 +311,15 @@ def activoRandom(activos):
         datos = linea.strip().split(' ')
         precio = int(datos[1])
         rand = random.randint(90, 110)
-        nuev = int(precio * (rand / 100))
+        nuev = int(precio * (rand / 100)) # Creamos un sistema que modifica el precio entre un 10 por ciento
         if nuev<10:
             nuevas_lineas.append(f'{datos[0]} {precio} {datos[2]} {datos[3]}\n')
         else:
             nuevas_lineas.append(f'{datos[0]} {nuev} {datos[2]} {datos[3]}\n')
 
     with open('activos.txt', 'w', encoding='utf-8') as f:
-        f.writelines(nuevas_lineas)
-    return cargar_activos(activos)
+        f.writelines(nuevas_lineas) # Guardamos los datos en el fichero
+    return cargar_activos(activos) # Cargamos los activos del fichero
 
 
 if __name__ == '__main__': # Inicio del programa
@@ -325,6 +329,7 @@ if __name__ == '__main__': # Inicio del programa
     usuarios: list = []
     usuarios = leer_usuarios(usuarios)
     backup = GestorBackup.restaurar_sistema()
+    # Cargamos todos los datos necesarios para el programa
 
     if not usuarios and backup is not None:
         usuarios = backup
