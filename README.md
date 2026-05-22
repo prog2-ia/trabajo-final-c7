@@ -5,7 +5,7 @@
 - Python3
 - No requiere librerias externas
   
-Para usar el programa hay que ejecutar desde python el archivo: "main.py"
+Para usar el programa hay que ejecutar ./dist/main en la carpeta instalada
 
 ## Este proyecto es un simulador interactivo de inversión, desarrollado en Python, que permite a los usuarios:
 - Registrarse e iniciar sesión
