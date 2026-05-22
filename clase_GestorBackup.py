@@ -1,10 +1,11 @@
+from clase_usuario import Usuario
 import pickle
 import os
 
 class GestorBackup:
 
     @staticmethod
-    def crear_backup(usuarios, nombre_archivo='backups/backup_sistema.pickle'):
+    def crear_backup(usuarios:list[Usuario], nombre_archivo: str ='backups/backup_sistema.pickle') -> None:
 
         if not os.path.exists('backups'):
             os.mkdir('backups')
@@ -19,13 +20,13 @@ class GestorBackup:
             print(f'Error al crear respaldo: {e}')
 
     @staticmethod
-    def restaurar_sistema(nombre_archivo='backups/backup_sistema.pickle'):
+    def restaurar_sistema(nombre_archivo: str ='backups/backup_sistema.pickle') -> list[Usuario] | None:
 
         if os.path.exists(nombre_archivo):
 
             try:
                 with open(nombre_archivo, 'rb') as f:
-                    return pickle.load(f)
+                    return list[Usuario](pickle.load(f))
 
             except EOFError:
                 return []

@@ -2,44 +2,50 @@ from clase_transaccion import Transaccion
 from datetime import datetime
 from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
 from clase_ErrorRetirada import ErrorRetirada
+from clase_accion import Accion
+from clase_fondo import Fondo
+from clase_cripto import Cripto
+from clase_bono import Bono
 
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
 
-    def __init__(self, nombre_usuario, contrasena, email, dinero): # Constructor
+    def __init__(self, nombre_usuario: str, contrasena: str, email: str, dinero: int) -> None: #constructor
         self.id = type(self).num_usuarios
         self.__nombre_usuario = nombre_usuario
         self.__contrasena = contrasena
         self.email = email
         self.dinero = dinero
-        self.transacciones=[]
+        self.transacciones: list[Transaccion] = []
         type(self).num_usuarios += 1
 
-    def leer_nombre(self):
+    def leer_nombre(self) -> str:
         return self.__nombre_usuario
-    def leer_contrasena(self):
+    def leer_contrasena(self) -> str:
         return self.__contrasena
 
+    def __str__(self) -> str:
+        return (f'Id: {self.id}\n'
+                f'Nombre usuario: {self.__nombre_usuario}\n'
+                f'Contrasena: {self.__contrasena}\n'
+                f'Email: {self.email}\n'
+                f'Dinero: {self.dinero}')
 
-
-    def __str__(self): # Visualizacion simple del objeto
-        return f'Id: {self.id}\nNombre usuario: {self.nombre_usuario}\nContrasena: {self.contrasena}\nEmail: {self.email}\nDinero: {self.dinero}'
-
-    def __repr__(self): # Visualizacion completa del objeto
+    def __repr__(self) -> str:
         return (f'Usuario(id={self.id}, '
-                f'nombre_usuario={self.nombre_usuario}, '
-                f'contrasena={self.contrasena}, '
+                f'nombre_usuario={self.__nombre_usuario}, '
+                f'contrasena={self.__contrasena}, '
                 f'email={self.email}, '
                 f'dinero={self.dinero})')
 
-    def agregar_dinero(self, valor): # Metodo para agregar dinero
+    def agregar_dinero(self, valor: int) -> None:# Metodo para agregar dinero
         if valor > 0:
             self.dinero += valor
             print(f'Se han anadido correctamente {valor}$, saldo actual: {self.dinero}$')
         else:
             print(f'La cantidad debe ser mayor a 0')
 
-    def sacar_dinero(self, valor): # Metodo para retirar dinero
+    def sacar_dinero(self, valor: int) -> None: # Metodo para retirar dinero
         if valor < 0:
             print(f'La cantidad debe ser mayor a 0')
         elif valor <= self.dinero:
@@ -49,11 +55,11 @@ class Usuario():
             raise ErrorRetirada(self.dinero, valor)
 
     @classmethod
-    def obtener_num_usuarios(cls): # Metodo de clase para obtener la cantidad de usuarios
+    def obtener_num_usuarios(cls) -> int: # Metodo de clase para obtener la cantidad de usuarios
         return cls.num_usuarios
 
-    def compra(self,activo,cantidad):
-        fecha = datetime.now()
+    def compra(self, activo: Accion | Fondo | Cripto | Bono, cantidad: int) -> None:
+        fecha = str(datetime.now())
         precio = activo.precio
         p=False
         if self.dinero >= cantidad*precio:
@@ -72,14 +78,14 @@ class Usuario():
         else:
             raise ErrorSaldoInsuficiente(self.dinero,cantidad*precio)
 
-    def mostrar_transacciones(self):
+    def mostrar_transacciones(self) -> None:
         if self.transacciones:
             for i in self.transacciones:
                 print(i)
         else:
             print('No hay transacciones')
 
-    def vender(self, transaccion, cantidad, activos):
+    def vender(self, transaccion: Transaccion, cantidad: int, activos: list[Accion | Fondo | Cripto | Bono]) -> None:
         assert cantidad <= transaccion.cantidad, 'No puedes vender mas activos de los que tienes'
         precio_actual = 0
 

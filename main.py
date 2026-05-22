@@ -10,7 +10,7 @@ from clase_GestorBackup import GestorBackup
 import random
 
 
-def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo de texto
+def leer_usuarios(usuarios: list[Usuario]) -> list[Usuario]: # Funcion para leer los usuarios desde un archivo de texto
     try:
         with open('usuarios.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
@@ -35,13 +35,13 @@ def leer_usuarios(usuarios): # Funcion para leer los usuarios desde un archivo d
             pass
         usuarios = []
         return usuarios
-def guardar_activos_usuario(usuarios, id):
+def guardar_activos_usuario(usuarios: list[Usuario], id: int) -> None:
     nombre_fichero = f"usuario_activo_{usuarios[id].leer_nombre()}.txt" # Creamos el nombre del archivo
     with open(nombre_fichero, 'w',encoding='utf-8') as f:
         for transaccion in usuarios[id].transacciones: # Escribimos los datos en el fichero
             f.write(str(transaccion))
 
-def leer_activos_usuario(usuarios, id, activos):
+def leer_activos_usuario(usuarios: list[Usuario],id: int,activos: list[Accion | Fondo | Bono | Cripto]) -> None:
     i = 0
     try:
 
@@ -67,13 +67,13 @@ def leer_activos_usuario(usuarios, id, activos):
         print('Error')
 
 
-def guardar_usuarios(usuarios): # Funcion para guardar los usuarios en el archivo
+def guardar_usuarios(usuarios: list[Usuario]) -> None: # Funcion para guardar los usuarios en el archivo
     with open('usuarios.txt', 'w',encoding='utf-8') as f:
         for usuario in usuarios: # Guardamos los datos separados por espacios
             f.write(usuario.leer_nombre() + ' ' + usuario.leer_contrasena() + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
 
-def registro(usuarios): # Funcion para registrar un nuevo usuario
+def registro(usuarios: list[Usuario]) -> tuple[list[Usuario], int, bool]: # Funcion para registrar un nuevo usuario
     run = True
     while run:
         run = False
@@ -97,7 +97,7 @@ def registro(usuarios): # Funcion para registrar un nuevo usuario
     usuarios.append(usuario)
     return usuarios, usuario.id, True
 
-def iniciar_sesion(usuarios): # Funcion para iniciar sesion
+def iniciar_sesion(usuarios: list[Usuario]) -> int: # Funcion para iniciar sesion
     buscar = True
     while buscar:
         nombre = input('Nombre de usuario: ')
@@ -107,9 +107,10 @@ def iniciar_sesion(usuarios): # Funcion para iniciar sesion
             if usuario.leer_nombre() == nombre and usuario.leer_contrasena() == contrasena_usuario:
                 return usuario.id
         print('Usuario o contrasena incorrecto')
+    return -1
 
-def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
-    opcion = '0'
+def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | Cripto]) -> tuple[bool, list[Accion | Fondo | Bono | Cripto]]: # Menu principal despues de iniciar sesion
+    opcion: int | str = '0'
     while opcion not in ('1', '2', '3', '4', '5', '6', '7','8','9'): # Validar opcion del menu
         activos = activoRandom(activos)
         print(f'\nHola {usuarios[id].leer_nombre()}')
@@ -242,10 +243,10 @@ def menu(id, usuarios, activos): # Menu principal despues de iniciar sesion
         guardar_activos_usuario(usuarios, id)
         GestorBackup.crear_backup(usuarios)
         return False,activos
+    return False, activos
 
-
-def cargar_activos(activos): # Funcion para cargar activos desde archivo
-    activos=[]
+def cargar_activos() -> list[Accion | Fondo | Bono | Cripto]:
+    activos: list[Accion | Fondo | Bono | Cripto] = []
     try:
         with open('activos.txt', 'r',encoding='utf-8') as f:
             lineas = f.readlines()
@@ -257,6 +258,7 @@ def cargar_activos(activos): # Funcion para cargar activos desde archivo
                 precio = int(datos[1])
                 codigo = datos[2]
                 tipo =  datos[3].strip() # Guardamos los datos segun los espacios en el fichero
+                activo: Accion | Fondo | Bono | Cripto
                 if tipo == 'Accion':
                     activo = Accion(nombre, precio, codigo)
                 elif tipo == 'Fondo':
@@ -279,7 +281,7 @@ def cargar_activos(activos): # Funcion para cargar activos desde archivo
         return activos
 
 
-def inicio(usuarios): # Menú inicial del programa
+def inicio(usuarios: list[Usuario]) -> tuple[list[Usuario], int | None, bool]: # Menú inicial del programa
     opcion = '0'
     while opcion not in ('1', '2', '3'):
         print('1. Iniciar Sesion')
@@ -298,9 +300,9 @@ def inicio(usuarios): # Menú inicial del programa
             return registro(usuarios) # Registramos
         elif opcion == '3':
             return usuarios, None, False # Nos salimos
+    return usuarios, None, False
 
-
-def activoRandom(activos):
+def activoRandom(activos: list[Accion | Fondo | Bono | Cripto]) -> list[Accion | Fondo | Bono | Cripto]:
     with open('activos.txt', 'r', encoding='utf-8') as f:
         lineas = f.readlines()
 
@@ -319,29 +321,34 @@ def activoRandom(activos):
 
     with open('activos.txt', 'w', encoding='utf-8') as f:
         f.writelines(nuevas_lineas) # Guardamos los datos en el fichero
-    return cargar_activos(activos) # Cargamos los activos del fichero
+    return cargar_activos() # Cargamos los activos del fichero
 
 
-if __name__ == '__main__': # Inicio del programa
+# Inicio del programa
+if __name__ == '__main__':
 
-    activos: list = []
-    activos = cargar_activos(activos)
-    usuarios: list = []
+    activos: list[Accion | Fondo | Bono | Cripto] = cargar_activos()
+
+    usuarios: list[Usuario] = []
     usuarios = leer_usuarios(usuarios)
-    backup = GestorBackup.restaurar_sistema()
-    # Cargamos todos los datos necesarios para el programa
 
-    if not usuarios and backup is not None:
-        usuarios = backup
+    if not usuarios:
+        backup = GestorBackup.restaurar_sistema()
+
+        if backup is not None:
+            usuarios = backup
 
     run = True
-    while run: # Bucle principal del programa
-        usuarios, id, run = inicio(usuarios)
-        if run == True:
-            sesion = True
 
+    while run:
+        usuarios, id, run = inicio(usuarios)
+
+        if run and id is not None:
+            sesion = True
             leer_activos_usuario(usuarios, id, activos)
+
+            while sesion:
+                sesion, activos = menu(id, usuarios, activos)
+
         else:
             sesion = False
-        while sesion:
-            sesion,activos = menu(id, usuarios, activos)
