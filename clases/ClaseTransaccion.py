@@ -1,7 +1,7 @@
-from clase_accion import Accion
-from clase_fondo import Fondo
-from clase_cripto import Cripto
-from clase_bono import Bono
+from  clases.ClaseAccion import Accion
+from  clases.ClaseFondo import Fondo
+from  clases.ClaseCripto import Cripto
+from  clases.ClaseBono import Bono
 class Transaccion():
 
     cont=0 #contador total de transacciones creadas

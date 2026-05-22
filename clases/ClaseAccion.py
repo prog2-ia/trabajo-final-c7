@@ -1,6 +1,6 @@
-from clase_activo import Activo
+from clases.ClaseActivo import Activo
 
-class Fondo(Activo): # Clase Fondo que hereda de Activo
+class Accion(Activo): # Clase Accion que hereda de Activo
     def __init__(self, nombre:str, precio:int, codigo:str) -> None:
         super().__init__(nombre, precio)
         self.codigo = codigo
@@ -11,5 +11,5 @@ class Fondo(Activo): # Clase Fondo que hereda de Activo
             f'Precio: {self.precio}\n'
             f'Codigo: {self.codigo}\n')
 
-    def tipo(self) -> str: # Metodo que indica tipo de activo
-        return 'Fondo'
+    def tipo(self) -> str:  # Metodo que devuelve el tipo de activo
+        return 'Accion'

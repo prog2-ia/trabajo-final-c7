@@ -1,4 +1,4 @@
-from clase_activo import Activo
+from  clases.ClaseActivo import Activo
 
 class Bono(Activo): # Clase Bono que hereda de Activo
     def __init__(self, nombre:str, precio:int, codigo:str) -> None:

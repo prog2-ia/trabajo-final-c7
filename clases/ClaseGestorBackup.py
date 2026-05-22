@@ -1,4 +1,4 @@
-from clase_usuario import Usuario
+from  clases.ClaseUsuario import Usuario
 import pickle
 import os
 
@@ -7,8 +7,8 @@ class GestorBackup:
     @staticmethod
     def crear_backup(usuarios:list[Usuario], nombre_archivo: str ='backups/backup_sistema.pickle') -> None:
 
-        if not os.path.exists('backups'):
-            os.mkdir('backups')
+        if not os.path.exists('../backups'):
+            os.mkdir('../backups')
 
         try:
             with open(nombre_archivo, 'wb') as f:

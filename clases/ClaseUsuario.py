@@ -1,11 +1,11 @@
-from clase_transaccion import Transaccion
+from  clases.ClaseTransaccion import Transaccion
 from datetime import datetime
-from clase_SaldoInsuficiente import ErrorSaldoInsuficiente
-from clase_ErrorRetirada import ErrorRetirada
-from clase_accion import Accion
-from clase_fondo import Fondo
-from clase_cripto import Cripto
-from clase_bono import Bono
+from  clases.ClaseSaldoInsuficiente import ErrorSaldoInsuficiente
+from  clases.ClaseErrorRetirada import ErrorRetirada
+from  clases.ClaseAccion import Accion
+from  clases.ClaseFondo import Fondo
+from  clases.ClaseCripto import Cripto
+from  clases.ClaseBono import Bono
 
 class Usuario():
     num_usuarios = 0 # Numero de Usuarios
