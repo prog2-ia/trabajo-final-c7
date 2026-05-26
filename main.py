@@ -8,11 +8,14 @@ from clases.ClaseErrorRetirada import ErrorRetirada
 from clases.ClaseTransaccion import Transaccion
 from clases.ClaseGestorBackup import GestorBackup
 import random
+import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RUTA_DATOS = os.path.join(BASE_DIR, 'datos')
 
 def leer_usuarios(usuarios: list[Usuario]) -> list[Usuario]: # Funcion para leer los usuarios desde un archivo de texto
     try:
-        with open('datos/usuarios.txt', 'r',encoding='utf-8') as f:
+        with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'r', encoding='utf-8') as f:
             lineas = f.readlines()
 
         if lineas: # Si hay lineas en el archivo
@@ -31,12 +34,15 @@ def leer_usuarios(usuarios: list[Usuario]) -> list[Usuario]: # Funcion para leer
             return usuarios
 
     except FileNotFoundError: # Si el archivo no existe, se crea uno vacio
-        with open('datos/usuarios.txt', 'w',encoding='utf-8'):
+        with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'w', encoding='utf-8'):
             pass
         usuarios = []
         return usuarios
 def guardar_activos_usuario(usuarios: list[Usuario], id: int) -> None:
-    nombre_fichero = f"datos/usuario_activo_{usuarios[id].leer_nombre()}.txt" # Creamos el nombre del archivo
+    nombre_fichero = os.path.join(
+        RUTA_DATOS,
+        f"usuario_activo_{usuarios[id].leer_nombre()}.txt"
+    ) # Creamos el nombre del archivo
     with open(nombre_fichero, 'w',encoding='utf-8') as f:
         for transaccion in usuarios[id].transacciones: # Escribimos los datos en el fichero
             f.write(str(transaccion))
@@ -45,10 +51,13 @@ def leer_activos_usuario(usuarios: list[Usuario],id: int,activos: list[Accion | 
     i = 0
     try:
 
-        nombre_fichero = f'datos/usuario_activo_{usuarios[id].leer_nombre()}.txt' # Creamos el nomvre
+        nombre_fichero = os.path.join(
+            RUTA_DATOS,
+            f'usuario_activo_{usuarios[id].leer_nombre()}.txt'
+        ) # Creamos el nombre
         with open(nombre_fichero, 'r',encoding='utf-8') as f:
             lineas = f.readlines()
-            while i < len(lineas): # Guardamos  cada linea segun la informacion
+            while i < len(lineas): # Guardamos cada linea segun la informacion
                 nombre = lineas[i].split()[1]
                 nombre_activo = lineas[i+1].split()[1]
                 cantidad = int(lineas[i+2].split()[1])
@@ -68,7 +77,7 @@ def leer_activos_usuario(usuarios: list[Usuario],id: int,activos: list[Accion | 
 
 
 def guardar_usuarios(usuarios: list[Usuario]) -> None: # Funcion para guardar los usuarios en el archivo
-    with open('datos/usuarios.txt', 'w',encoding='utf-8') as f:
+    with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'w', encoding='utf-8') as f:
         for usuario in usuarios: # Guardamos los datos separados por espacios
             f.write(usuario.leer_nombre() + ' ' + usuario.leer_contrasena() + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
@@ -248,7 +257,7 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
 def cargar_activos() -> list[Accion | Fondo | Bono | Cripto]:
     activos: list[Accion | Fondo | Bono | Cripto] = [] # Borramos la lista de activos  en caso de no estar vacia
     try:
-        with open('datos/activos.txt', 'r',encoding='utf-8') as f:
+        with open(os.path.join(RUTA_DATOS, 'activos.txt'), 'r', encoding='utf-8') as f:
             lineas = f.readlines() # Leemos el fichero de activos
 
         if lineas:
@@ -275,7 +284,7 @@ def cargar_activos() -> list[Accion | Fondo | Bono | Cripto]:
             return activos # Devolvemos la lista de activos vacia
 
     except FileNotFoundError:
-        with open('datos/activos.txt', 'w',encoding='utf-8'): # Creamos el archivo en caso de no existir
+        with open(os.path.join(RUTA_DATOS, 'activos.txt'), 'w', encoding='utf-8'): # Creamos el archivo en caso de no existir
             pass
         activos = []
         return activos
@@ -303,7 +312,7 @@ def inicio(usuarios: list[Usuario]) -> tuple[list[Usuario], int | None, bool]: #
     return usuarios, None, False
 
 def activoRandom(activos: list[Accion | Fondo | Bono | Cripto]) -> list[Accion | Fondo | Bono | Cripto]:
-    with open('datos/activos.txt', 'r', encoding='utf-8') as f:
+    with open(os.path.join(RUTA_DATOS, 'activos.txt'), 'r', encoding='utf-8') as f:
         lineas = f.readlines()
 
     nuevas_lineas = []
@@ -319,7 +328,7 @@ def activoRandom(activos: list[Accion | Fondo | Bono | Cripto]) -> list[Accion |
         else:
             nuevas_lineas.append(f'{datos[0]} {nuev} {datos[2]} {datos[3]}\n')
 
-    with open('datos/activos.txt', 'w', encoding='utf-8') as f:
+    with open(os.path.join(RUTA_DATOS, 'activos.txt'), 'w', encoding='utf-8') as f:
         f.writelines(nuevas_lineas) # Guardamos los datos en el fichero
     return cargar_activos() # Cargamos los activos del fichero
 
