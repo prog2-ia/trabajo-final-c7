@@ -12,7 +12,7 @@ import os
 import sys
 
 if getattr(sys, 'frozen', False):# si no se pone esto no va el ejecutable junto a las carpetas
-    BASE_DIR = sys._MEIPASS
+    BASE_DIR = getattr(sys, "_MEIPASS")
     SAVE_DIR = os.path.dirname(sys.executable)
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
