@@ -83,7 +83,7 @@ def registro(usuarios: list[Usuario]) -> tuple[list[Usuario], int, bool]: # Func
         email = input('Ingrese su email: ')
         while True:
             try:
-                dinero = int(input('Ingrese su dinero: '))
+                dinero = int(input('Ingrese su dinero: ')) # Verificamos que haya ingresado un numero valido
                 break
             except ValueError:
                 print('Debe ingresar un numero')
@@ -136,7 +136,7 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
             try:
                 opcion = int(input('Ingrese una opcion: ')) # Guardamos la opcion con sus excepciones
             except ValueError:
-                print('Debe ingresar un numero')
+                print('Debe ingresar un numero') # Miramos las expcepciones para ver los numeros validos
                 opcion = -1
             if opcion < 1 or opcion > len(activos) :
                 print('Opcion no valida...')
@@ -150,7 +150,7 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
             if cantidad < 1:
                 print('Opcion no valida...')
         try:
-            usuarios[id].compra(activos[opcion - 1], cantidad)
+            usuarios[id].compra(activos[opcion - 1], cantidad) # Intentamos la compra
 
         except ErrorSaldoInsuficiente as e:
             print(e)
@@ -164,7 +164,7 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
                 for transaccion in usuarios[id].transacciones:
                     cont += 1
 
-                    precio_actual = transaccion.activo.precio
+                    precio_actual = transaccion.activo.precio # Guardamos el precio del activo del momento
 
                     for activo in activos:
                         if activo.nombre == transaccion.activo.nombre:
@@ -206,7 +206,7 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
     elif opcion == '5': # Opcion 5: Ingresar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         try:
-            ingreso = int(input('Cuanto dinero quiere ingresar: '))
+            ingreso = int(input('Cuanto dinero quiere ingresar: ')) # Comprobamos que el numero sea correcto
         except ValueError:
             print('Debe ingresar un numero')
             ingreso = 0
@@ -219,19 +219,19 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
     elif opcion == '7': # Opcion 7: Calcular valor total en activos
         suma=0
         for transaccion in usuarios[id].transacciones:
-            suma+=(transaccion.activo.precio*transaccion.cantidad)
+            suma+=(transaccion.activo.precio*transaccion.cantidad) # Guardamos la suma total de los valores de las transacciones
         print(suma)
         return True,activos
 
     elif opcion == '8': # Opcion 8: Retirar dinero
         print(f'Saldo actual: {usuarios[id].dinero}')
         try:
-            retirar = int(input('Cuanto dinero quiere retirar: '))
+            retirar = int(input('Cuanto dinero quiere retirar: ')) # Comprobamos que el valor sea valido
         except ValueError:
             print('Debe ingresar un numero')
             retirar = 0
         try:
-            usuarios[id].sacar_dinero(retirar)
+            usuarios[id].sacar_dinero(retirar) # Intentamos retirar el dinero en caso de ser posible
 
         except ErrorRetirada as e:
             print(e)
@@ -246,10 +246,10 @@ def menu(id: int,usuarios: list[Usuario],activos: list[Accion | Fondo | Bono | C
     return False, activos
 
 def cargar_activos() -> list[Accion | Fondo | Bono | Cripto]:
-    activos: list[Accion | Fondo | Bono | Cripto] = []
+    activos: list[Accion | Fondo | Bono | Cripto] = [] # Borramos la lista de activos  en caso de no estar vacia
     try:
         with open('datos/activos.txt', 'r',encoding='utf-8') as f:
-            lineas = f.readlines()
+            lineas = f.readlines() # Leemos el fichero de activos
 
         if lineas:
             for linea in lineas:
@@ -269,13 +269,13 @@ def cargar_activos() -> list[Accion | Fondo | Bono | Cripto]:
                     activo = Cripto(nombre, precio, codigo)
                 activos.append(activo) # Creamos el activo segun su tipo
 
-            return activos
+            return activos # Devolvemos los activos
         else:
             activos = []
-            return activos
+            return activos # Devolvemos la lista de activos vacia
 
     except FileNotFoundError:
-        with open('datos/activos.txt', 'w',encoding='utf-8'):
+        with open('datos/activos.txt', 'w',encoding='utf-8'): # Creamos el archivo en caso de no existir
             pass
         activos = []
         return activos
@@ -287,7 +287,7 @@ def inicio(usuarios: list[Usuario]) -> tuple[list[Usuario], int | None, bool]: #
         print('1. Iniciar Sesion')
         print('2. Registrarse')
         print('3. Salir')
-        opcion = input('Opcion: ')
+        opcion = input('Opcion: ') # Guardamos la opcion
 
         if opcion == '1':
             if usuarios:
@@ -332,8 +332,10 @@ if __name__ == '__main__':
     usuarios: list[Usuario] = []
     usuarios = leer_usuarios(usuarios)
 
+    # Guardamos la lista de activos y de usuarios
+
     if not usuarios:
-        backup = GestorBackup.restaurar_sistema()
+        backup = GestorBackup.restaurar_sistema() # Llamamos al restaurar sistema del gestorBackup
 
         if backup is not None:
             usuarios = backup
@@ -341,14 +343,14 @@ if __name__ == '__main__':
     run = True
 
     while run:
-        usuarios, id, run = inicio(usuarios)
+        usuarios, id, run = inicio(usuarios) # Iniciamos sesion
 
         if run and id is not None:
             sesion = True
-            leer_activos_usuario(usuarios, id, activos)
+            leer_activos_usuario(usuarios, id, activos) # Leemos los activos
 
             while sesion:
-                sesion, activos = menu(id, usuarios, activos)
+                sesion, activos = menu(id, usuarios, activos) # Iniciamos el menu con el usuario el id y los activos del momento
 
         else:
-            sesion = False
+            sesion = False # Cerramos la sesion

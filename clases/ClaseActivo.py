@@ -7,9 +7,9 @@ class Activo(ABC): # Clase base de activos
 
     def __str__(self) -> str:
         return (
-            f'Nombre: {self.nombre}\n'
+            f'Nombre: {self.nombre}\n' # Creamos un str de la clase
             f'Precio: {self.precio}\n')
 
     @abstractmethod
-    def tipo(self) -> str:
+    def tipo(self) -> str: # Creamos el abstractmethod tipo
         pass

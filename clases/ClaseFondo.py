@@ -5,7 +5,7 @@ class Fondo(Activo): # Clase Fondo que hereda de Activo
         super().__init__(nombre, precio)
         self.codigo = codigo
 
-    def __str__(self) -> str:
+    def __str__(self) -> str: # Creamos el str de la clase
         return (
             f'Nombre: {self.nombre}\n'
             f'Precio: {self.precio}\n'

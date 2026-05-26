@@ -5,7 +5,7 @@ class Accion(Activo): # Clase Accion que hereda de Activo
         super().__init__(nombre, precio)
         self.codigo = codigo
 
-    def __str__(self) -> str:
+    def __str__(self) -> str: # Creamos un string de la clase para acceder
         return (
             f'Nombre: {self.nombre}\n'
             f'Precio: {self.precio}\n'

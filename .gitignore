@@ -217,6 +217,9 @@ __marimo__/
 
 # Fichero
 datos/usuarios.txt
+datos/usuario_activo_*.txt
+usuarios.txt
 usuario_activo_*.txt
+
 
 backups/

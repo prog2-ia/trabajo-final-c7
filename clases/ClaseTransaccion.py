@@ -10,7 +10,7 @@ class Transaccion():
         self.usuario = usuario
         self.cantidad = cantidad
         self.fecha = fecha
-        type(self).cont+=1
+        type(self).cont+=1 # Sumamos uno para ver la cantidad de objetos creados en la clase
 
     def tipo(self)->str: # Devuelve el tipo de activo
         return self.activo.tipo()
