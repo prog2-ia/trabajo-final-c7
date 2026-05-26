@@ -9,13 +9,28 @@ from clases.ClaseTransaccion import Transaccion
 from clases.ClaseGestorBackup import GestorBackup
 import random
 import os
+import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, 'frozen', False):# si no se pone esto no va el ejecutable junto a las carpetas
+    BASE_DIR = sys._MEIPASS
+    SAVE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    SAVE_DIR = BASE_DIR
+
 RUTA_DATOS = os.path.join(BASE_DIR, 'datos')
+RUTA_GUARDADO = os.path.join(SAVE_DIR, 'datos')
+
+os.makedirs(RUTA_GUARDADO, exist_ok=True)
 
 def leer_usuarios(usuarios: list[Usuario]) -> list[Usuario]: # Funcion para leer los usuarios desde un archivo de texto
     try:
-        with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'r', encoding='utf-8') as f:
+        ruta_usuarios = os.path.join(RUTA_GUARDADO, 'usuarios.txt')
+
+        if not os.path.exists(ruta_usuarios):
+            open(ruta_usuarios, 'a').close()
+
+        with open(ruta_usuarios, 'r', encoding='utf-8') as f:
             lineas = f.readlines()
 
         if lineas: # Si hay lineas en el archivo
@@ -34,14 +49,14 @@ def leer_usuarios(usuarios: list[Usuario]) -> list[Usuario]: # Funcion para leer
             return usuarios
 
     except FileNotFoundError: # Si el archivo no existe, se crea uno vacio
-        with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'w', encoding='utf-8'):
+        with open(os.path.join(RUTA_GUARDADO, 'usuarios.txt'), 'w', encoding='utf-8'):
             pass
         usuarios = []
         return usuarios
 def guardar_activos_usuario(usuarios: list[Usuario], id: int) -> None:
     nombre_fichero = os.path.join(
-        RUTA_DATOS,
-        f"usuario_activo_{usuarios[id].leer_nombre()}.txt"
+        RUTA_GUARDADO,
+        f'usuario_activo_{usuarios[id].leer_nombre()}.txt'
     ) # Creamos el nombre del archivo
     with open(nombre_fichero, 'w',encoding='utf-8') as f:
         for transaccion in usuarios[id].transacciones: # Escribimos los datos en el fichero
@@ -52,7 +67,7 @@ def leer_activos_usuario(usuarios: list[Usuario],id: int,activos: list[Accion | 
     try:
 
         nombre_fichero = os.path.join(
-            RUTA_DATOS,
+            RUTA_GUARDADO,
             f'usuario_activo_{usuarios[id].leer_nombre()}.txt'
         ) # Creamos el nombre
         with open(nombre_fichero, 'r',encoding='utf-8') as f:
@@ -77,7 +92,7 @@ def leer_activos_usuario(usuarios: list[Usuario],id: int,activos: list[Accion | 
 
 
 def guardar_usuarios(usuarios: list[Usuario]) -> None: # Funcion para guardar los usuarios en el archivo
-    with open(os.path.join(RUTA_DATOS, 'usuarios.txt'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(RUTA_GUARDADO, 'usuarios.txt'), 'w', encoding='utf-8') as f:
         for usuario in usuarios: # Guardamos los datos separados por espacios
             f.write(usuario.leer_nombre() + ' ' + usuario.leer_contrasena() + ' ' + usuario.email + ' ' + str(usuario.dinero) + '\n')
 
